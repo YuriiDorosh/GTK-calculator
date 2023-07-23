@@ -29,6 +29,12 @@ gcc calculator.c -o calc `pkg-config --cflags --libs gtk+-3.0`
 ```
 
 ### The second way:
+--> Clone the repository using the command below :
+
+```bash
+git clone https://github.com/YuriiDorosh/GTK-calculator.git
+```
+--> Use launching file:
 ```bash
 chmod +x run.sh
 ./build_and_run.sh
