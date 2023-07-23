@@ -14,7 +14,121 @@ typedef struct{
 
 GtkWidget *box; // Declare a pointer to a GtkWidget object for a box container
 
+#define SIZE 10
 
+char input_buffer[100] = {0}; // Initialize an input buffer to store user input
+char output_buffer[100] = {0}; // Initialize an output buffer to display results
+
+bool clear_buffer = false; // Flag to indicate whether the input buffer should be cleared
+bool add=false; // Flag to indicate addition operation
+bool mul = false; // Flag to indicate multiplication operation
+bool divv = false; // Flag to indicate division operation
+bool sub = false; // Flag to indicate subtraction operation
+
+double result = 0.0; // Variable to store the result of the calculation
+static float num[SIZE]; // Static array to store numbers entered by the user
+int count = 0; // Variable to keep track of the number of elements in the "num" array
+
+
+// Callback function for button click events to perform calculations
+static void calculate(GtkButton *button, gpointer data){
+
+	const gchar* text = gtk_button_get_label(button); // Get the label of the clicked button
+
+	if( (strcmp("+", text)==0) ||   (strcmp("-", text)==0) ||  (strcmp("/", text)==0) ||  (strcmp("x", text)==0) ||  (strcmp("=", text)==0) ){
+		num[count] = atof(input_buffer); // Convert the input buffer to a number and store it in the "num" array
+		count++; // Increment the count of elements in the "num" array
+		clear_buffer = true; // Set the flag to clear the input buffer
+
+        // Set the appropriate operation flag based on the clicked operator button
+		if(strcmp("+",text)==0){
+			add = true;
+		}
+		if(strcmp("-",text)==0){
+			sub = true;
+		}
+		if(strcmp("/",text)==0){
+			divv = true;
+		}
+		if(strcmp("x",text)==0){
+			mul = true;
+		}
+	}
+
+	if(strcmp("=",text)==0){
+		int x = sizeof(num)/sizeof(num[0]);
+		
+        // Perform the appropriate calculation based on the operation flags
+		if(add){
+			for(int i=0; i<x; i++){
+				result += num[i];
+			}
+		}
+
+		if(divv){
+			result = num[0]/num[1];
+		}
+
+		if(sub){
+				if(result == 0.0){
+					result = num[0]*2;
+				}
+			for(int i=0; i<x; i++){
+				result -= num[i];
+			}
+		}
+	
+		if(mul){
+			result = num[0]*num[1];
+		}
+
+        // Reset all the operation flags
+		add = false;
+		mul = false;
+		divv = false;
+		sub = false;
+		
+		gtk_entry_set_text(GTK_ENTRY(box), ""); // Clear the entry box
+		sprintf(output_buffer, "%.3f", result); // Format the result and store it in the output buffer
+		gtk_entry_set_text(GTK_ENTRY(box), output_buffer); // Set the output buffer as the text of the entry box
+		result = 0.0; // Reset the result variable
+	}
+	else{
+		if(clear_buffer){
+			memset(input_buffer,0,strlen(input_buffer)); // Clear the input buffer
+			clear_buffer = false; // Reset the clear buffer flag
+		}
+        else{
+			strncat(input_buffer,text, 1); // Append the clicked button label to the input buffer
+		}
+		
+			strncat(output_buffer,text, 1); // Append the clicked button label to the output buffer
+			gtk_entry_set_text(GTK_ENTRY(box), output_buffer); // Set the output buffer as the text of the entry box
+	}
+		
+    // Check if the clicked button is the "C" button (clear button)
+	if(strcmp("C",text)==0){
+		gtk_entry_set_text(GTK_ENTRY(box), ""); // Clear the entry box
+		memset(input_buffer,0,strlen(input_buffer)); // Clear the input buffer
+		memset(output_buffer,0,strlen(output_buffer)); // Clear the output buffer
+
+		count = 0; // Reset the count of elements in the "num" array
+		int x = sizeof(num)/sizeof(num[0]);
+		
+		for(int i=0; i<x; i++){
+				num[i] = 0;
+		}
+
+        // Reset all the operation flags
+		add = false;
+		mul = false;
+		divv = false;
+		sub = false;
+	}
+}
+
+
+// Callback function for the "activate" signal of the GtkApplication
 static void activate(GtkApplication *app, gpointer user_data){
 	calc widget; // Declare a variable "widget" of type "calc"
 
@@ -80,9 +194,26 @@ static void activate(GtkApplication *app, gpointer user_data){
 	gtk_grid_attach(GTK_GRID(widget.grid),widget.button[10],2,5,1,1);
     gtk_grid_attach(GTK_GRID(widget.grid),widget.button[16],3,5,1,1);
 
+    g_signal_connect(widget.button[0],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[1],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[2],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[3],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[4],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[5],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[6],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[7],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[8],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[9],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[10],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[11],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[12],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[13],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[14],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[15],"clicked",G_CALLBACK(calculate), NULL);
+	g_signal_connect(widget.button[16],"clicked",G_CALLBACK(calculate), NULL);
+
     gtk_widget_show_all(widget.window); // Show all the widgets inside the main window
 }
-
 
 
 int main(int argc, char **argv){
