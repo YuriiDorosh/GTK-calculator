@@ -5,24 +5,24 @@
 #include<stdbool.h>
 
 
+// Define a custom data structure named "calc" to hold GTK widgets
 typedef struct{
-	GtkWidget *window;
-	GtkWidget *grid;
-	GtkWidget *button[17];
+	GtkWidget *window; // Declare a pointer to a GtkWidget object for the main window
+	GtkWidget *grid; // Declare a pointer to a GtkWidget object for a grid layout
+	GtkWidget *button[17]; // Declare an array of pointers to GtkWidget objects for buttons
 }calc;
 
-GtkWidget *box;
+GtkWidget *box; // Declare a pointer to a GtkWidget object for a box container
 
-static void activate(GtkApplication *app, gpointer user_data);
 
 static void activate(GtkApplication *app, gpointer user_data){
-	calc widget;
+	calc widget; // Declare a variable "widget" of type "calc"
 
-	widget.window = gtk_application_window_new(app);
-	gtk_window_set_position(GTK_WINDOW(widget.window),GTK_WIN_POS_CENTER);
-	gtk_window_set_title(GTK_WINDOW(widget.window),"Calculator");
-	gtk_window_set_default_size(GTK_WINDOW(widget.window), 200, 200);
-	gtk_container_set_border_width(GTK_CONTAINER(widget.window),10);
+	widget.window = gtk_application_window_new(app); // Create a new main window
+	gtk_window_set_position(GTK_WINDOW(widget.window),GTK_WIN_POS_CENTER); // Set the position of the window 
+	gtk_window_set_title(GTK_WINDOW(widget.window),"Calculator"); // Set the title of the window 
+	gtk_window_set_default_size(GTK_WINDOW(widget.window), 200, 200); // Set the default size of the window
+	gtk_container_set_border_width(GTK_CONTAINER(widget.window),10); // Set the border width of the window
 
     gtk_widget_show_all(widget.window);
 }
