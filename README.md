@@ -27,7 +27,7 @@ sudo apt-get install libgtk-3-dev
 --> Project launch :
 
 ```bash
-gcc calculator.c -o calc `pkg-config --cflags --libs gtk+-3.0`
+gcc calculator.c -o calc `pkg-config --cflags --libs gtk+-3.0` -lm
 ./calc
 ```
 
