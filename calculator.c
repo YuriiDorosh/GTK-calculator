@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <math.h>
 
-
 // Define a custom data structure named "calc" to hold GTK widgets
 typedef struct {
     GtkWidget *window; // Declare a pointer to a GtkWidget object for the main window
@@ -35,11 +34,19 @@ double result = 0.0; // Variable to store the result of the calculation
 static float num[SIZE]; // Static array to store numbers entered by the user
 int count = 0; // Variable to keep track of the number of elements in the "num" array
 
+void save_history(const char* expression, const char* result) {
+    FILE* file = fopen("calc_history.txt", "a"); // Open the file in append mode
+    if (file != NULL) {
+        fprintf(file, "%s = %s\n", expression, result); // Write the expression and result to the file
+        fclose(file); // Close the file
+    }
+}
+
+// Calculate trigonometric functions
 static void calculate_sin(GtkButton *button, gpointer data);
 static void calculate_cos(GtkButton *button, gpointer data);
 static void calculate_tan(GtkButton *button, gpointer data);
 static void calculate_cot(GtkButton *button, gpointer data);
-
 
 // Callback function for button click events to perform calculations
 static void calculate(GtkButton *button, gpointer data) {
@@ -83,6 +90,7 @@ static void calculate(GtkButton *button, gpointer data) {
     if (strcmp("=", text) == 0) {
         int x = sizeof(num) / sizeof(num[0]);
 
+        
         if (add) {
             for (int i = 0; i < x; i++) {
                 result += num[i];
@@ -133,7 +141,12 @@ static void calculate(GtkButton *button, gpointer data) {
 
         gtk_entry_set_text(GTK_ENTRY(box), ""); // Clear the entry box
         sprintf(output_buffer, "%.3f", result); // Format the result and store it in the output buffer
+
+        // Save the calculation history before resetting flags and buffers
+        save_history(input_buffer, output_buffer);
+
         gtk_entry_set_text(GTK_ENTRY(box), output_buffer); // Set the output buffer as the text of the entry box
+
         result = 0.0; // Reset the result variable
     } else {
         if (clear_buffer) {
@@ -141,10 +154,8 @@ static void calculate(GtkButton *button, gpointer data) {
             clear_buffer = false; // Reset the clear buffer flag
         } else {
             strncat(input_buffer, text, 1); // Append the clicked button label to the input buffer
-            // strcpy(input_buffer, text);
         }
         strncat(output_buffer, text, 1); // Append the clicked button label to the output buffer
-        // strcpy(output_buffer, text);
         gtk_entry_set_text(GTK_ENTRY(box), output_buffer); // Set the output buffer as the text of the entry box
     }
 
@@ -173,7 +184,6 @@ static void calculate(GtkButton *button, gpointer data) {
     }
 }
 
-
 // Calculate trigonometric functions
 static void calculate_sin(GtkButton *button, gpointer data) {
     sin_flag = true;
@@ -194,7 +204,6 @@ static void calculate_cot(GtkButton *button, gpointer data) {
     cot_flag = true;
     calculate(button, data);
 }
-
 
 // Callback function for the "activate" signal of the GtkApplication
 static void activate(GtkApplication *app, gpointer user_data) {
@@ -293,12 +302,12 @@ static void activate(GtkApplication *app, gpointer user_data) {
     gtk_widget_show_all(widget.window); // Show all the widgets inside the main window
 }
 
-int main(int argc, char **argv){
-	GtkApplication *app; // Declare a pointer to a GtkApplication object
+int main(int argc, char **argv) {
+    GtkApplication *app; // Declare a pointer to a GtkApplication object
 
-	gtk_init(&argc, &argv); // Initialize GTK with command-line arguments
+    gtk_init(&argc, &argv); // Initialize GTK with command-line arguments
 
-	int status;
+    int status;
     // Create a new GtkApplication, where:
     // "org.gtk.gui_calculator": This is the application ID, which serves as a unique identifier for this particular application. 
     // Application IDs are commonly used to identify the program within its environment. In this case, "org.gtk.calculator" suggests 
@@ -307,14 +316,14 @@ int main(int argc, char **argv){
     // using G_APPLICATION_FLAGS_NONE means that no additional flags or options are provided during the creation of the GtkApplication object. 
     // The program will be created with default values, as no specific flags have been set. This implies that the application will work with the 
     // standard default settings for GtkApplication
-	app = gtk_application_new("org.gtk.gui_calculator", G_APPLICATION_FLAGS_NONE); 
+    app = gtk_application_new("org.gtk.gui_calculator", G_APPLICATION_FLAGS_NONE); 
 
     // Connect the "activate" signal of the application to the activate callback function
-	g_signal_connect(app,"activate", G_CALLBACK(activate), NULL);
+    g_signal_connect(app,"activate", G_CALLBACK(activate), NULL);
 
-	status = g_application_run(G_APPLICATION(app), argc, argv); // Run the application
+    status = g_application_run(G_APPLICATION(app), argc, argv); // Run the application
 
-	g_object_unref(app); // Free the memory used by the GtkApplication object
+    g_object_unref(app); // Free the memory used by the GtkApplication object
 
-return status;
+    return status;
 }
