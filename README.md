@@ -51,6 +51,6 @@ cd GTK-calculator
 
 ```bash
 chmod +x run.sh
-./build_and_run.sh
+./run.sh
 ```
 
